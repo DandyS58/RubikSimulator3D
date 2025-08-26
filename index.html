@@ -19,9 +19,9 @@
             background-color: black;
             height: 80px;
             display: flex;
-            justify-content: center; /* centrado horizontal */
-            align-items: flex-start; /* alineado arriba */
-            padding-top: 10px; /* separa un poco del borde superior */
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 10px;
         }
 
             .header-bar h1 {
@@ -29,6 +29,19 @@
                 font-size: 2em;
                 margin: 0;
             }
+
+        /* Barra de categorías */
+        .categories-bar {
+            background-color: #333; /* gris oscuro */
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px; /* espacio entre categorías */
+            color: white;
+            font-weight: bold;
+            font-size: 1em;
+        }
 
         /* Descripción general */
         .description-section {
@@ -71,6 +84,14 @@
 
     <div class="header-bar">
         <h1>Mi Simulador de Cubos</h1>
+    </div>
+
+    <!-- Barra de categorías -->
+    <div class="categories-bar">
+        <span>Clásicos</span>
+        <span>Megaminx</span>
+        <span>Pyraminx</span>
+        <span>Otros</span>
     </div>
 
     <!-- Descripción General -->
