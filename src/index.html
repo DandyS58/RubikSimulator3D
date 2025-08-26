@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Simulador de Cubos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: 'Noto Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        /* Franja del título */
+        .header-bar {
+            background-color: black;
+            height: 80px;
+            display: flex;
+            justify-content: center; /* centrado horizontal */
+            align-items: flex-start; /* alineado arriba */
+            padding-top: 10px; /* separa un poco del borde superior */
+        }
+
+            .header-bar h1 {
+                color: white;
+                font-size: 2em;
+                margin: 0;
+            }
+
+        /* Descripción general */
+        .description-section {
+            margin: 40px 20px 40px 20px;
+            text-align: center;
+        }
+
+            .description-section h2 {
+                margin-bottom: 15px;
+            }
+
+        /* Mejores tiempos */
+        .records-section {
+            margin: 40px 20px;
+            text-align: center;
+        }
+
+            .records-section h2 {
+                margin-bottom: 15px;
+            }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            border-bottom: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <h1>Mi Simulador de Cubos</h1>
+    </div>
+
+    <!-- Descripción General -->
+    <div class="description-section">
+        <h2>Descripción General</h2>
+        <p>Explora diferentes cubos y diviértete resolviéndolos. Próximamente podrás guardar tus mejores tiempos y acceder a distintos tipos de cubos con facilidad.</p>
+    </div>
+
+    <!-- Mejores Tiempos -->
+    <div class="records-section">
+        <h2>Mejores Tiempos</h2>
+        <table>
+            <tr>
+                <th>Cubo</th>
+                <th>Tiempo</th>
+            </tr>
+            <tr>
+                <td>2x2</td>
+                <td>--</td>
+            </tr>
+            <tr>
+                <td>3x3</td>
+                <td>--</td>
+            </tr>
+            <tr>
+                <td>4x4</td>
+                <td>--</td>
+            </tr>
+            <tr>
+                <td>5x5</td>
+                <td>--</td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>
