@@ -33,7 +33,6 @@
         /* Barra de categorías */
         .categories-bar {
             background-color: #333; /* gris oscuro */
-            height: 35px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -41,6 +40,45 @@
             color: white;
             font-weight: bold;
             font-size: 1em;
+            position: relative;
+        }
+
+        .category {
+            position: relative;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+            .category:hover {
+                background-color: #444;
+            }
+
+        /* Submenú */
+        .submenu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #444;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.4s ease;
+        }
+
+            .submenu a {
+                display: block;
+                padding: 10px;
+                color: white;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+
+                .submenu a:hover {
+                    background-color: #555;
+                }
+
+        .category:hover .submenu {
+            max-height: 200px; /* suficiente para mostrar items */
         }
 
         /* Descripción general */
@@ -88,10 +126,16 @@
 
     <!-- Barra de categorías -->
     <div class="categories-bar">
-        <span>Clásicos</span>
-        <span>Megaminx</span>
-        <span>Pyraminx</span>
-        <span>Otros</span>
+        <div class="category">
+            Clásicos
+            <div class="submenu">
+                <a href="#">2x2x2</a>
+                <a href="#">3x3x3</a>
+            </div>
+        </div>
+        <div class="category">Megaminx</div>
+        <div class="category">Pyraminx</div>
+        <div class="category">Otros</div>
     </div>
 
     <!-- Descripción General -->
