@@ -15,7 +15,7 @@
 
         .cubo-container {
             flex: 2;
-            background-color: #d6eaf8; /* azul pastel claro */
+            background-color: #d6eaf8;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -23,7 +23,7 @@
 
         .controles-container {
             flex: 1;
-            background-color: #e5e7e9; /* gris claro */
+            background-color: #e5e7e9;
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -53,31 +53,26 @@
             cursor: pointer;
             min-width: 50px;
         }
+
+        #toggle {
+            margin-top: 10px;
+            background-color: #aed6f1;
+            border: none;
+        }
     </style>
 </head>
 <body>
     <div class="cubo-container">
-        <!-- Aquí irá el modelo 3D del cubo -->
         <p>Modelo 3D del cubo (placeholder)</p>
     </div>
 
     <div class="controles-container">
         <div class="seccion">
             <h3>Notación del Cubo</h3>
-            <div class="botones">
-                <button>U</button>
-                <button>U'</button>
-                <button>D</button>
-                <button>D'</button>
-                <button>R</button>
-                <button>R'</button>
-                <button>L</button>
-                <button>L'</button>
-                <button>F</button>
-                <button>F'</button>
-                <button>B</button>
-                <button>B'</button>
+            <div class="botones" id="notacion-botones">
+                <!-- Botones generados por JS -->
             </div>
+            <button id="toggle">'</button>
         </div>
 
         <div class="seccion">
@@ -92,5 +87,29 @@
             </div>
         </div>
     </div>
+
+    <script>
+    const movimientos = ['U', 'D', 'R', 'L', 'F', 'B'];
+    let modoPrima = false;
+
+    const contenedor = document.getElementById('notacion-botones');
+    const toggleBtn = document.getElementById('toggle');
+
+    function renderBotones() {
+      contenedor.innerHTML = '';
+      movimientos.forEach(mov => {
+        const btn = document.createElement('button');
+        btn.textContent = modoPrima ? `${mov}'` : mov;
+        contenedor.appendChild(btn);
+      });
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      modoPrima = !modoPrima;
+      renderBotones();
+    });
+
+    renderBotones(); // Inicializa los botones
+    </script>
 </body>
 </html>
