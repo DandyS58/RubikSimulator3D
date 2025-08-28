@@ -89,27 +89,71 @@
     </div>
 
     <script>
-    const movimientos = ['U', 'D', 'R', 'L', 'F', 'B'];
-    let modoPrima = false;
+        const movimientos = ['U', 'D', 'R', 'L', 'F', 'B'];
+        let modoPrima = false;
 
-    const contenedor = document.getElementById('notacion-botones');
-    const toggleBtn = document.getElementById('toggle');
+        const contenedor = document.getElementById('notacion-botones');
+        const toggleBtn = document.getElementById('toggle');
 
-    function renderBotones() {
-      contenedor.innerHTML = '';
-      movimientos.forEach(mov => {
-        const btn = document.createElement('button');
-        btn.textContent = modoPrima ? `${mov}'` : mov;
-        contenedor.appendChild(btn);
-      });
-    }
+        function renderBotones() {
+            contenedor.innerHTML = '';
+            movimientos.forEach(mov => {
+                const btn = document.createElement('button');
+                btn.textContent = modoPrima ? `${mov}'` : mov;
+                btn.setAttribute('data-movimiento', mov);
+                contenedor.appendChild(btn);
+            });
+        }
 
-    toggleBtn.addEventListener('click', () => {
-      modoPrima = !modoPrima;
-      renderBotones();
-    });
+        toggleBtn.addEventListener('click', () => {
+            modoPrima = !modoPrima;
+            renderBotones();
+        });
 
-    renderBotones(); // Inicializa los botones
+        // 🧠 Escuchar teclas del teclado
+        document.addEventListener('keydown', (event) => {
+            const tecla = event.key.toUpperCase();
+
+            // Alternar notación con barra espaciadora
+            if (event.code === 'Space') {
+                event.preventDefault(); // Evita que la página se desplace
+                modoPrima = !modoPrima;
+                renderBotones();
+                return;
+            }
+
+            // Notación del cubo
+            if (movimientos.includes(tecla)) {
+                const movimiento = modoPrima ? `${tecla}'` : tecla;
+                alert(`Se activó el movimiento: ${movimiento}`);
+                return;
+            }
+
+            // Controles de cámara
+            switch (event.code) {
+                case 'ArrowLeft':
+                    alert('Cámara: ←');
+                    break;
+                case 'ArrowRight':
+                    alert('Cámara: →');
+                    break;
+                case 'ArrowUp':
+                    alert('Cámara: ↑');
+                    break;
+                case 'ArrowDown':
+                    alert('Cámara: ↓');
+                    break;
+                case 'Numpad4':
+                    alert('Rotar ↺');
+                    break;
+                case 'Numpad6':
+                    alert('Rotar ↻');
+                    break;
+            }
+        });
+
+        renderBotones();
     </script>
+
 </body>
 </html>
