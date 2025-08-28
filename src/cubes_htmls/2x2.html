@@ -19,6 +19,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
 
         .controles-container {
@@ -59,9 +60,20 @@
             background-color: #aed6f1;
             border: none;
         }
+
+        .atajos-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
     </style>
 </head>
 <body>
+    <div class="atajos-toggle">
+        <button id="verAtajosBtn">Ver atajos</button>
+    </div>
+
     <div class="cubo-container">
         <p>Modelo 3D del cubo (placeholder)</p>
     </div>
@@ -153,6 +165,15 @@
         });
 
         renderBotones();
+
+        const verAtajosBtn = document.getElementById('verAtajosBtn');
+        let mostrarAtajos = false;
+
+        verAtajosBtn.addEventListener('click', () => {
+            mostrarAtajos = !mostrarAtajos;
+            verAtajosBtn.textContent = mostrarAtajos ? 'Ocultar atajos' : 'Ver atajos';
+            // Aquí después agregaremos la lógica para mostrar los atajos
+        });
     </script>
 
 </body>
