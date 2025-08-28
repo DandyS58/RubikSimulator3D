@@ -84,7 +84,7 @@
             <div class="botones" id="notacion-botones">
                 <!-- Botones generados por JS -->
             </div>
-            <button id="toggle">'</button>
+
         </div>
 
         <div class="seccion">
@@ -102,25 +102,92 @@
 
     <script>
         const movimientos = ['U', 'D', 'R', 'L', 'F', 'B'];
+        const camaraBotones = [
+            { label: '←', atajo: '←' },
+            { label: '→', atajo: '→' },
+            { label: '↑', atajo: '↑' },
+            { label: '↓', atajo: '↓' },
+            { label: '↺', atajo: 'Num 4' },
+            { label: '↻', atajo: 'Num 6' }
+        ];
         let modoPrima = false;
+        let mostrarAtajos = false;
 
         const contenedor = document.getElementById('notacion-botones');
-        const toggleBtn = document.getElementById('toggle');
 
         function renderBotones() {
             contenedor.innerHTML = '';
+
+            // Botones de movimientos normales
             movimientos.forEach(mov => {
                 const btn = document.createElement('button');
-                btn.textContent = modoPrima ? `${mov}'` : mov;
                 btn.setAttribute('data-movimiento', mov);
+
+                const texto = document.createElement('div');
+                texto.textContent = modoPrima ? `${mov}'` : mov;
+                btn.appendChild(texto);
+
+                if (mostrarAtajos) {
+                    const atajo = document.createElement('span');
+                    atajo.textContent = `Tecla: ${mov}`;
+                    atajo.style.display = 'block';
+                    atajo.style.fontSize = '12px';
+                    atajo.style.color = '#666';
+                    atajo.style.marginTop = '4px';
+                    btn.appendChild(atajo);
+                }
+
                 contenedor.appendChild(btn);
             });
+
+            // Botón especial para alternar prima
+            const btnPrima = document.createElement('button');
+            btnPrima.addEventListener('click', () => {
+                modoPrima = !modoPrima;
+                renderBotones();
+            });
+
+            const textoPrima = document.createElement('div');
+            textoPrima.textContent = '′'; // símbolo visual para prima
+            btnPrima.appendChild(textoPrima);
+
+            if (mostrarAtajos) {
+                const atajo = document.createElement('span');
+                atajo.textContent = 'Tecla: Espacio';
+                atajo.style.display = 'block';
+                atajo.style.fontSize = '12px';
+                atajo.style.color = '#666';
+                atajo.style.marginTop = '4px';
+                btnPrima.appendChild(atajo);
+            }
+
+            contenedor.appendChild(btnPrima);
         }
 
-        toggleBtn.addEventListener('click', () => {
-            modoPrima = !modoPrima;
-            renderBotones();
-        });
+        function renderBotonesCamara() {
+            const camaraContenedor = document.querySelector('.seccion:nth-of-type(2) .botones');
+            camaraContenedor.innerHTML = '';
+
+            camaraBotones.forEach(({ label, atajo }) => {
+                const btn = document.createElement('button');
+
+                const texto = document.createElement('div');
+                texto.textContent = label;
+                btn.appendChild(texto);
+
+                if (mostrarAtajos) {
+                    const span = document.createElement('span');
+                    span.textContent = `Tecla: ${atajo}`;
+                    span.style.display = 'block';
+                    span.style.fontSize = '12px';
+                    span.style.color = '#666';
+                    span.style.marginTop = '4px';
+                    btn.appendChild(span);
+                }
+
+                camaraContenedor.appendChild(btn);
+            });
+        }
 
         // 🧠 Escuchar teclas del teclado
         document.addEventListener('keydown', (event) => {
@@ -167,14 +234,15 @@
         renderBotones();
 
         const verAtajosBtn = document.getElementById('verAtajosBtn');
-        let mostrarAtajos = false;
 
         verAtajosBtn.addEventListener('click', () => {
             mostrarAtajos = !mostrarAtajos;
             verAtajosBtn.textContent = mostrarAtajos ? 'Ocultar atajos' : 'Ver atajos';
-            // Aquí después agregaremos la lógica para mostrar los atajos
+            renderBotones();
+            renderBotonesCamara();
         });
     </script>
+
 
 </body>
 </html>
