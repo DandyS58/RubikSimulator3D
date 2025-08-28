@@ -1,12 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2x2</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2x2x2</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
+        .cubo-container {
+            flex: 2;
+            background-color: #d6eaf8; /* azul pastel claro */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .controles-container {
+            flex: 1;
+            background-color: #e5e7e9; /* gris claro */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .botones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  
+    <div class="cubo-container">
+        <!-- Aquí irá el modelo 3D del cubo -->
+        <p>Modelo 3D del cubo (placeholder)</p>
+    </div>
+
+    <div class="controles-container">
+        <h3>Controles</h3>
+        <div class="botones">
+            <button>R</button>
+            <button>U</button>
+            <button>F</button>
+            <button>Girar cámara</button>
+            <!-- Agrega más botones según la notación que uses -->
+        </div>
+    </div>
 </body>
 </html>
+
