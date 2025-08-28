@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2x2x2</title>
     <style>
+        /* ==== ESTILOS GENERALES ==== */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             height: 100vh;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Apila cubo arriba y controles abajo */
         }
 
+        /* ==== CONTENEDOR PRINCIPAL DEL CUBO ==== */
         .cubo-container {
-            flex: 2;
+            flex: 2; /* Ocupa más espacio que los controles */
             background-color: #d6eaf8;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            position: relative; /* Necesario para posicionar la ventanita flotante */
         }
 
+        /* ==== CONTENEDOR DE LOS CONTROLES ==== */
         .controles-container {
-            flex: 1;
+            flex: 1; /* Ocupa menos espacio que el cubo */
             background-color: #e5e7e9;
             display: flex;
             justify-content: space-around;
@@ -31,6 +34,7 @@
             padding: 20px;
         }
 
+        /* ==== SECCIONES DE CONTROLES ==== */
         .seccion {
             display: flex;
             flex-direction: column;
@@ -48,6 +52,7 @@
             justify-content: center;
         }
 
+        /* ==== ESTILOS DE BOTONES ==== */
         button {
             padding: 10px 15px;
             font-size: 16px;
@@ -55,40 +60,43 @@
             min-width: 50px;
         }
 
+        /* Botón de toggle prima */
         #toggle {
             margin-top: 10px;
             background-color: #aed6f1;
             border: none;
         }
 
+        /* Botón para mostrar/ocultar atajos */
         .atajos-toggle {
             position: absolute;
             top: 10px;
             left: 10px;
         }
 
+        /* Botón activado (ej. timer encendido) */
         button.activo {
             background-color: #5dade2;
             color: white;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
+        /* Ventana flotante lateral */
         .mini-ventana {
             position: absolute;
             top: 10px;
             right: 10px;
-            width: 300px; /* más grande */
-            height: 270px; /* más alta */
+            width: 300px;
+            height: 270px;
             border: 1px solid #ccc;
             border-radius: 6px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: height 0.3s ease;
+            transition: height 0.3s ease; /* Animación suave al abrir/cerrar */
         }
 
-        /* Encabezado blanco con el botón */
         .toggle-ventana {
             background-color: white;
             border: none;
@@ -100,7 +108,6 @@
             border-bottom: 1px solid #ccc;
         }
 
-        /* Contenido con fondo azul pastel */
         .contenido-ventana {
             background-color: #d6eaf8;
             padding: 10px;
@@ -108,36 +115,40 @@
             font-size: 14px;
             color: #333;
         }
-
-
-
     </style>
 </head>
 <body>
 
+    <!-- ==== ZONA DEL CUBO ==== -->
     <div class="cubo-container">
+        <!-- Botón para mostrar/ocultar atajos -->
         <div class="atajos-toggle">
             <button id="verAtajosBtn">Ver atajos</button>
         </div>
+
+        <!-- Aquí debería ir el modelo 3D del cubo -->
         <p>Modelo 3D del cubo (placeholder)</p>
+
+        <!-- Ventana flotante con vista alternativa -->
         <div class="mini-ventana" id="miniVentana">
             <button class="toggle-ventana" id="toggleVentana">v</button>
             <div class="contenido-ventana">
                 <p>Vista alternativa del cubo (placeholder)</p>
             </div>
         </div>
-
     </div>
 
+    <!-- ==== CONTROLES PRINCIPALES ==== -->
     <div class="controles-container">
+        <!-- Notación de movimientos (U, D, R, etc.) -->
         <div class="seccion">
             <h3>Notación del Cubo</h3>
             <div class="botones" id="notacion-botones">
-                <!-- Botones generados por JS -->
+                <!-- Botones generados dinámicamente con JS -->
             </div>
-
         </div>
 
+        <!-- Utilidades extra (timer, revolver, resolver...) -->
         <div class="seccion utilidades">
             <h3>Utilidades</h3>
             <div class="botones" id="utilidad-botones">
@@ -145,7 +156,7 @@
             </div>
         </div>
 
-
+        <!-- Controles de cámara (rotar cubo) -->
         <div class="seccion">
             <h3>Controles de Cámara</h3>
             <div class="botones">
@@ -160,7 +171,8 @@
     </div>
 
     <script>
-        const movimientos = ['U', 'D', 'R', 'L', 'F', 'B'];
+        /* ==== VARIABLES GLOBALES ==== */
+        const movimientos = ['U', 'D', 'R', 'L', 'F', 'B']; // Notación básica
         const camaraBotones = [
             { label: '←', atajo: '←' },
             { label: '→', atajo: '→' },
@@ -169,23 +181,26 @@
             { label: '↺', atajo: 'Num 4' },
             { label: '↻', atajo: 'Num 6' }
         ];
-        let modoPrima = false;
-        let mostrarAtajos = false;
+        let modoPrima = false;    // Si está activado el `'` en la notación
+        let mostrarAtajos = false; // Mostrar/ocultar teclas rápidas
 
         const contenedor = document.getElementById('notacion-botones');
 
+        /* ==== RENDER DE BOTONES DE NOTACIÓN ==== */
         function renderBotones() {
             contenedor.innerHTML = '';
 
-            // Botones de movimientos normales
+            // Botones de movimientos normales (U, D, R, etc.)
             movimientos.forEach(mov => {
                 const btn = document.createElement('button');
                 btn.setAttribute('data-movimiento', mov);
 
+                // Texto principal del botón
                 const texto = document.createElement('div');
                 texto.textContent = modoPrima ? `${mov}'` : mov;
                 btn.appendChild(texto);
 
+                // Mostrar atajo si está activado
                 if (mostrarAtajos) {
                     const atajo = document.createElement('span');
                     atajo.textContent = `Tecla: ${mov}`;
@@ -199,15 +214,15 @@
                 contenedor.appendChild(btn);
             });
 
-            // Botón especial para alternar prima
+            // Botón especial para alternar modo prima
             const btnPrima = document.createElement('button');
             btnPrima.addEventListener('click', () => {
                 modoPrima = !modoPrima;
-                renderBotones();
+                renderBotones(); // Vuelve a renderizar con el nuevo estado
             });
 
             const textoPrima = document.createElement('div');
-            textoPrima.textContent = '′'; // símbolo visual para prima
+            textoPrima.textContent = '′';
             btnPrima.appendChild(textoPrima);
 
             if (mostrarAtajos) {
@@ -223,6 +238,7 @@
             contenedor.appendChild(btnPrima);
         }
 
+        /* ==== RENDER DE BOTONES DE CÁMARA ==== */
         function renderBotonesCamara() {
             const camaraContenedor = document.querySelector('.seccion:nth-of-type(2) .botones');
             camaraContenedor.innerHTML = '';
@@ -248,6 +264,7 @@
             });
         }
 
+        /* ==== RENDER DE BOTONES DE UTILIDADES ==== */
         function renderBotonesUtilidad() {
             const utilidadContenedor = document.getElementById('utilidad-botones');
             utilidadContenedor.innerHTML = '';
@@ -263,6 +280,7 @@
                 btn.textContent = label;
                 btn.id = `util-${id}`;
 
+                // Timer se activa/desactiva, los demás son placeholders
                 if (id === 'timer') {
                     btn.addEventListener('click', () => {
                         btn.classList.toggle('activo');
@@ -277,27 +295,26 @@
             });
         }
 
-
-        // 🧠 Escuchar teclas del teclado
+        /* ==== EVENTOS DE TECLADO ==== */
         document.addEventListener('keydown', (event) => {
             const tecla = event.key.toUpperCase();
 
-            // Alternar notación con barra espaciadora
+            // Alternar prima con barra espaciadora
             if (event.code === 'Space') {
-                event.preventDefault(); // Evita que la página se desplace
+                event.preventDefault(); // Evita que baje la página
                 modoPrima = !modoPrima;
                 renderBotones();
                 return;
             }
 
-            // Notación del cubo
+            // Movimientos del cubo (U, D, R, L, F, B)
             if (movimientos.includes(tecla)) {
                 const movimiento = modoPrima ? `${tecla}'` : tecla;
                 alert(`Se activó el movimiento: ${movimiento}`);
                 return;
             }
 
-            // Controles de cámara
+            // Controles de cámara con flechas y teclado numérico
             switch (event.code) {
                 case 'ArrowLeft':
                     alert('Cámara: ←');
@@ -320,14 +337,13 @@
             }
         });
 
+        /* ==== INICIALIZACIONES ==== */
         renderBotones();
         renderBotonesUtilidad();
 
-        const verAtajosBtn = document.getElementById('verAtajosBtn');
-
+        /* ==== MANEJO DE MINI-VENTANA ==== */
         const miniVentana = document.getElementById('miniVentana');
         const toggleVentana = document.getElementById('toggleVentana');
-
         let ventanaMinimizada = false;
 
         toggleVentana.addEventListener('click', () => {
@@ -342,16 +358,14 @@
             }
         });
 
-
+        /* ==== BOTÓN MOSTRAR/OCULTAR ATAJOS ==== */
+        const verAtajosBtn = document.getElementById('verAtajosBtn');
         verAtajosBtn.addEventListener('click', () => {
             mostrarAtajos = !mostrarAtajos;
             verAtajosBtn.textContent = mostrarAtajos ? 'Ocultar atajos' : 'Ver atajos';
             renderBotones();
             renderBotonesCamara();
         });
-
     </script>
-
-
 </body>
 </html>
