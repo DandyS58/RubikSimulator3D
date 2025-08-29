@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2x2x2</title>
@@ -115,6 +116,14 @@
             font-size: 14px;
             color: #333;
         }
+
+        #cuboCanvasContainer {
+            width: 810px;
+            aspect-ratio: 1 / 1; /* Mantiene proporción 1:1 */
+            max-height: 320px;
+            overflow: hidden;
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -126,8 +135,7 @@
             <button id="verAtajosBtn">Ver atajos</button>
         </div>
 
-        <!-- Aquí debería ir el modelo 3D del cubo -->
-        <p>Modelo 3D del cubo (placeholder)</p>
+        <div id="cuboCanvasContainer"></div>
 
         <!-- Ventana flotante con vista alternativa -->
         <div class="mini-ventana" id="miniVentana">
@@ -171,6 +179,172 @@
     </div>
 
     <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+        camera.position.set(1, 1, 1.4); // vista desde una esquina
+        camera.lookAt(0, 0, 0);       // enfoca al centro del cubo
+
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const canvasContainer = document.getElementById('cuboCanvasContainer');
+        renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+        renderer.setClearColor(0x000000, 0); // color negro con opacidad 0
+
+        canvasContainer.appendChild(renderer.domElement);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+        });
+
+        const cubitos = [];
+        const size = 0.9; // tamaño de cada cubito
+        const offset = size + 0.05; // espacio entre cubitos
+
+        function rotarCara(movimiento, sentidoHorario = true) {
+            const umbral = 0.01;
+            let cara = [];
+
+            // Selección de cubitos según la cara
+            switch (movimiento) {
+                case 'U':
+                    cara = cubitos.filter(c => Math.abs(c.position.y - 0) < umbral);
+                    break;
+                case 'D':
+                    cara = cubitos.filter(c => Math.abs(c.position.y + offset) < umbral);
+                    break;
+                case 'R':
+                    cara = cubitos.filter(c => Math.abs(c.position.x - 0) < umbral);
+                    break;
+                case 'L':
+                    cara = cubitos.filter(c => Math.abs(c.position.x + offset) < umbral);
+                    break;
+                case 'F':
+                    cara = cubitos.filter(c => Math.abs(c.position.z - 0) < umbral);
+                    break;
+                case 'B':
+                    cara = cubitos.filter(c => Math.abs(c.position.z + offset) < umbral);
+                    break;
+                default:
+                    return;
+            }
+
+            // Calcular centro de la cara
+            const centro = new THREE.Vector3();
+            cara.forEach(c => centro.add(c.position));
+            centro.divideScalar(cara.length);
+
+            // Crear grupo en el centro
+            const grupo = new THREE.Group();
+            grupo.position.copy(centro);
+            scene.add(grupo);
+
+            // Reubicar cubitos como hijos del grupo
+            cara.forEach(c => {
+                c.updateMatrixWorld(true);
+                c.position.sub(centro); // trasladar al origen del grupo
+                grupo.add(c);
+                scene.remove(c);
+            });
+
+            // Eje de rotación
+            let eje = new THREE.Vector3();
+            switch (movimiento) {
+                case 'U':
+                case 'D':
+                    eje.set(0, 1, 0);
+                    break;
+                case 'R':
+                case 'L':
+                    eje.set(1, 0, 0);
+                    break;
+                case 'F':
+                case 'B':
+                    eje.set(0, 0, 1);
+                    break;
+            }
+
+            // Sentido de rotación
+            const anguloTotal = sentidoHorario ? -Math.PI / 2 : Math.PI / 2;
+            const duracion = 400;
+            const inicio = Date.now();
+
+            function animar() {
+                const ahora = Date.now();
+                const progreso = Math.min((ahora - inicio) / duracion, 1);
+                const anguloActual = anguloTotal * progreso;
+
+                grupo.rotation.set(0, 0, 0);
+                grupo.rotateOnAxis(eje, anguloActual);
+
+                if (progreso < 1) {
+                    requestAnimationFrame(animar);
+                } else {
+                    // Aplicar transformación final
+                    grupo.rotation.set(0, 0, 0);
+                    grupo.rotateOnAxis(eje, anguloTotal);
+                    grupo.updateMatrixWorld(true);
+
+                    // Reubicar cubitos en la escena con posición y rotación global
+                    cara.forEach(c => {
+                        c.updateMatrixWorld(true);
+
+                        const posicionGlobal = new THREE.Vector3();
+                        posicionGlobal.setFromMatrixPosition(c.matrixWorld);
+
+                        const quaternionGlobal = new THREE.Quaternion();
+                        quaternionGlobal.setFromRotationMatrix(c.matrixWorld);
+
+                        c.position.copy(posicionGlobal);
+                        c.quaternion.copy(quaternionGlobal);
+
+                        grupo.remove(c);
+                        scene.add(c);
+                    });
+
+                    grupo.clear();
+                    scene.remove(grupo);
+                }
+            }
+
+            animar();
+        }
+
+       
+        
+
+
+        for (let x = -1; x <= 0; x++) {
+            for (let y = -1; y <= 0; y++) {
+                for (let z = -1; z <= 0; z++) {
+                    const geometry = new THREE.BoxGeometry(size, size, size);
+
+                    const materials = [
+                        new THREE.MeshBasicMaterial({ color: 'white' }),  // derecha
+                        new THREE.MeshBasicMaterial({ color: 'yellow' }), // izquierda
+                        new THREE.MeshBasicMaterial({ color: 'blue' }),   // arriba
+                        new THREE.MeshBasicMaterial({ color: 'green' }),  // abajo
+                        new THREE.MeshBasicMaterial({ color: 'red' }),    // frente
+                        new THREE.MeshBasicMaterial({ color: 'orange' })  // atrás
+                    ];
+
+                    const cubito = new THREE.Mesh(geometry, materials);
+                    cubito.position.set(x * offset, y * offset, z * offset);
+                    scene.add(cubito);
+                    cubitos.push(cubito);
+                }
+            }
+        }
+
+
         /* ==== VARIABLES GLOBALES ==== */
         const movimientos = ['U', 'D', 'R', 'L', 'F', 'B']; // Notación básica
         const camaraBotones = [
@@ -185,6 +359,8 @@
         let mostrarAtajos = false; // Mostrar/ocultar teclas rápidas
 
         const contenedor = document.getElementById('notacion-botones');
+
+        
 
         /* ==== RENDER DE BOTONES DE NOTACIÓN ==== */
         function renderBotones() {
@@ -309,8 +485,11 @@
 
             // Movimientos del cubo (U, D, R, L, F, B)
             if (movimientos.includes(tecla)) {
-                const movimiento = modoPrima ? `${tecla}'` : tecla;
-                alert(`Se activó el movimiento: ${movimiento}`);
+                _sentidoHorario = !modoPrima;
+                if (tecla == "L" || tecla == "B") _sentidoHorario = modoPrima;
+
+                const sentidoHorario = _sentidoHorario;
+                rotarCara(tecla, sentidoHorario);
                 return;
             }
 
