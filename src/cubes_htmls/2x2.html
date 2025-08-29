@@ -485,10 +485,7 @@
 
             // Movimientos del cubo (U, D, R, L, F, B)
             if (movimientos.includes(tecla)) {
-                _sentidoHorario = !modoPrima;
-                if (tecla == "L" || tecla == "B") _sentidoHorario = modoPrima;
-
-                const sentidoHorario = _sentidoHorario;
+                const sentidoHorario = !modoPrima;
                 rotarCara(tecla, sentidoHorario);
                 return;
             }
