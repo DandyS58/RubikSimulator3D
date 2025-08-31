@@ -273,7 +273,12 @@
             }
 
             // Sentido de rotación
-            const anguloTotal = sentidoHorario ? -Math.PI / 2 : Math.PI / 2;
+            let sentido = sentidoHorario;
+            if (['L', 'D', 'B'].includes(movimiento)) {
+                sentido = !sentidoHorario;
+            }
+            const anguloTotal = sentido ? -Math.PI / 2 : Math.PI / 2;
+
             const duracion = 400;
             const inicio = Date.now();
 
