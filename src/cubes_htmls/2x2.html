@@ -124,6 +124,11 @@
             overflow: hidden;
             position: relative;
         }
+
+        #advertenciaTexto.activo {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -133,7 +138,10 @@
         <!-- Botón para mostrar/ocultar atajos -->
         <div class="atajos-toggle">
             <button id="verAtajosBtn">Ver atajos</button>
+            <input type="checkbox" id="movimientoCheckbox">
+                x8 veces más rápido
         </div>
+        
 
         <div id="cuboCanvasContainer"></div>
 
@@ -180,6 +188,8 @@
     </div>
 
     <script>
+        let moveTime = 400;
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 5;
@@ -280,7 +290,7 @@
             }
             const anguloTotal = sentido ? -Math.PI / 2 : Math.PI / 2;
 
-            const duracion = 400;
+            const duracion = moveTime;
             const inicio = Date.now();
 
             function animar() {
@@ -358,7 +368,7 @@
             }
 
             const anguloTotal = sentidoHorario ? -Math.PI / 2 : Math.PI / 2;
-            const duracion = 400;
+            const duracion = moveTime;
             const inicio = Date.now();
 
             function animar() {
@@ -439,12 +449,13 @@
         let modoPrima = false;    // Si está activado el `'` en la notación
         let mostrarAtajos = false; // Mostrar/ocultar teclas rápidas
         let cooldownActivo = false;
-        const cooldownDuracion = 400; // milisegundos
+        let cooldownDuracion = moveTime; // milisegundos
+
+        
 
         const contenedor = document.getElementById('notacion-botones');
 
         
-
         /* ==== RENDER DE BOTONES DE NOTACIÓN ==== */
         function renderBotones() {
             contenedor.innerHTML = '';
@@ -687,6 +698,23 @@
             renderBotones();
             renderBotonesCamara();
             
+        });
+
+        // CheckBox
+        const movimientoCheckbox = document.getElementById('movimientoCheckbox');
+  
+
+        movimientoCheckbox.addEventListener('change', () => {
+
+            if (movimientoCheckbox.checked) {
+                moveTime = 50;
+                cooldownDuracion = 70;
+                
+            } else {
+                moveTime = 400;
+                cooldownDuracion = 410;
+
+            }
         });
 
     </script>
