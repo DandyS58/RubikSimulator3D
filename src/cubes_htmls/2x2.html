@@ -515,7 +515,16 @@
             const camaraContenedor = document.getElementById('camara-botones');
             camaraContenedor.innerHTML = '';
 
-            camaraBotones.forEach(({ label, atajo }) => {
+            const camaraBotones = [
+                { label: '←', atajo: 'ArrowLeft', movimiento: 'U' },
+                { label: '→', atajo: 'ArrowRight', movimiento: "U'" },
+                { label: '↑', atajo: 'ArrowUp', movimiento: 'R' },
+                { label: '↓', atajo: 'ArrowDown', movimiento: "R'" },
+                { label: '↺', atajo: 'Numpad4', movimiento: "F'" },
+                { label: '↻', atajo: 'Numpad6', movimiento: 'F' }
+            ];
+
+            camaraBotones.forEach(({ label, atajo, movimiento }) => {
                 const btn = document.createElement('button');
 
                 const texto = document.createElement('div');
@@ -532,15 +541,24 @@
                     btn.appendChild(span);
                 }
 
-                // Aquí podrías agregar el listener para controlar la cámara
+                // 🔥 Listener con cooldown para rotar el cubo completo
                 btn.addEventListener('click', () => {
-                    console.log(`Acción de cámara: ${label}`);
-                    // ejecutarAccionCamara(label); ← si defines una función para eso
+                    if (cooldownActivo) return;
+
+                    cooldownActivo = true;
+                    rotarCuboCompleto(movimiento);
+
+                    setTimeout(() => {
+                        cooldownActivo = false;
+                    }, cooldownDuracion);
                 });
 
                 camaraContenedor.appendChild(btn);
             });
         }
+
+
+
 
 
         /* ==== RENDER DE BOTONES DE UTILIDADES ==== */
@@ -640,6 +658,7 @@
 
         /* ==== INICIALIZACIONES ==== */
         renderBotones();
+        renderBotonesCamara();
         renderBotonesUtilidad();
 
         /* ==== MANEJO DE MINI-VENTANA ==== */
