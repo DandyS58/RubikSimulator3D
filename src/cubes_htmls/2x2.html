@@ -125,6 +125,18 @@
             position: relative;
         }
 
+        #miniCanvasContainer {
+            aspect-ratio: 1 / 1;
+            width: 200px; /* o el tamaño que prefieras */
+            height: auto;
+        }
+
+        #miniCanvasContainer {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
         
     </style>
 </head>
@@ -146,7 +158,7 @@
         <div class="mini-ventana" id="miniVentana">
             <button class="toggle-ventana" id="toggleVentana">v</button>
             <div class="contenido-ventana">
-                <p>Vista alternativa del cubo (placeholder)</p>
+                <div id="miniCanvasContainer"></div>
             </div>
         </div>
     </div>
@@ -201,17 +213,42 @@
 
         canvasContainer.appendChild(renderer.domElement);
 
+
+        //mini ventana
+        const miniCanvasContainer = document.getElementById('miniCanvasContainer');
+
+        const miniCamera = new THREE.PerspectiveCamera(85, 1, 0.1, 1000);
+        miniCamera.position.set(1.5, -3, 1.9);
+        miniCamera.lookAt(0, -1.3, 0);
+
+
+        const miniRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        miniRenderer.setSize(miniCanvasContainer.clientWidth, miniCanvasContainer.clientHeight);
+        miniRenderer.setClearColor(0x000000, 0);
+        miniCanvasContainer.appendChild(miniRenderer.domElement);
+
+
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
+            miniRenderer.render(scene, miniCamera);
         }
+        
+
         animate();
 
         window.addEventListener('resize', () => {
+            // Principal
             camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+
+            // Alternativa
+            miniRenderer.setSize(miniCanvasContainer.clientWidth, miniCanvasContainer.clientHeight);
+            miniCamera.aspect = miniCanvasContainer.clientWidth / miniCanvasContainer.clientHeight;
+            miniCamera.updateProjectionMatrix();
         });
+
 
         const cubitos = [];
         const size = 0.9; // tamaño de cada cubito
@@ -670,7 +707,6 @@
         renderBotonesUtilidad();
 
         /* ==== MANEJO DE MINI-VENTANA ==== */
-        const miniVentana = document.getElementById('miniVentana');
         const toggleVentana = document.getElementById('toggleVentana');
         let ventanaMinimizada = false;
 
@@ -680,11 +716,20 @@
             if (ventanaMinimizada) {
                 miniVentana.style.height = '30px';
                 toggleVentana.textContent = '>';
+                miniCanvasContainer.style.display = 'none';
             } else {
-                miniVentana.style.height = '270px';
+                miniVentana.style.height = '300px';
                 toggleVentana.textContent = 'v';
+                miniCanvasContainer.style.display = 'block';
+
+                // Reajustar el renderer
+                miniRenderer.setSize(miniCanvasContainer.clientWidth, miniCanvasContainer.clientHeight);
+                miniCamera.aspect = miniCanvasContainer.clientWidth / miniCanvasContainer.clientHeight;
+                miniCamera.updateProjectionMatrix();
             }
         });
+
+
 
         /* ==== BOTÓN MOSTRAR/OCULTAR ATAJOS ==== */
         const verAtajosBtn = document.getElementById('verAtajosBtn');
