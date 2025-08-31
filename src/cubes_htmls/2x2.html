@@ -325,7 +325,82 @@
         }
 
        
-        
+        function rotarCuboCompleto(movimiento) {
+            const grupo = new THREE.Group();
+
+            // Calcular centro del cubo
+            const centro = new THREE.Vector3();
+            cubitos.forEach(c => centro.add(c.position));
+            centro.divideScalar(cubitos.length);
+            grupo.position.copy(centro);
+            scene.add(grupo);
+
+            // Añadir cubitos al grupo con posición relativa
+            cubitos.forEach(c => {
+                c.updateMatrixWorld(true);
+                c.position.sub(centro); // trasladar al origen del grupo
+                grupo.add(c);
+                scene.remove(c);
+            });
+
+            // Eje y sentido
+            let eje = new THREE.Vector3();
+            let sentidoHorario = true;
+
+            switch (movimiento) {
+                case 'R': eje.set(1, 0, 0); break;
+                case "R'": eje.set(1, 0, 0); sentidoHorario = false; break;
+                case 'U': eje.set(0, 1, 0); break;
+                case "U'": eje.set(0, 1, 0); sentidoHorario = false; break;
+                case 'F': eje.set(0, 0, 1); break;
+                case "F'": eje.set(0, 0, 1); sentidoHorario = false; break;
+                default: return;
+            }
+
+            const anguloTotal = sentidoHorario ? -Math.PI / 2 : Math.PI / 2;
+            const duracion = 400;
+            const inicio = Date.now();
+
+            function animar() {
+                const ahora = Date.now();
+                const progreso = Math.min((ahora - inicio) / duracion, 1);
+                const anguloActual = anguloTotal * progreso;
+
+                grupo.rotation.set(0, 0, 0);
+                grupo.rotateOnAxis(eje, anguloActual);
+
+                if (progreso < 1) {
+                    requestAnimationFrame(animar);
+                } else {
+                    grupo.rotation.set(0, 0, 0);
+                    grupo.rotateOnAxis(eje, anguloTotal);
+                    grupo.updateMatrixWorld(true);
+
+                    cubitos.forEach(c => {
+                        c.updateMatrixWorld(true);
+
+                        const posicionGlobal = new THREE.Vector3();
+                        posicionGlobal.setFromMatrixPosition(c.matrixWorld);
+
+                        const quaternionGlobal = new THREE.Quaternion();
+                        quaternionGlobal.setFromRotationMatrix(c.matrixWorld);
+
+                        c.position.copy(posicionGlobal);
+                        c.quaternion.copy(quaternionGlobal);
+
+                        grupo.remove(c);
+                        scene.add(c);
+                    });
+
+                    grupo.clear();
+                    scene.remove(grupo);
+                }
+            }
+
+            animar();
+        }
+
+
 
 
         for (let x = -1; x <= 0; x++) {
@@ -500,8 +575,6 @@
         }
 
         /* ==== EVENTOS DE TECLADO ==== */
-
-
         document.addEventListener('keydown', (event) => {
             const tecla = event.key.toUpperCase();
 
@@ -513,7 +586,7 @@
                 return;
             }
 
-            // Movimientos del cubo (U, D, R, L, F, B)
+            // Movimientos de capas (U, D, R, L, F, B)
             if (movimientos.includes(tecla)) {
                 if (cooldownActivo) return;
 
@@ -528,28 +601,42 @@
                 return;
             }
 
-            // Controles de cámara con flechas y teclado numérico
+            // Controles de cámara → girar el cubo completo
+            if (cooldownActivo) return;
+
+            let movimientoGlobal = null;
+
             switch (event.code) {
                 case 'ArrowLeft':
-                    alert('Cámara: ←');
+                    movimientoGlobal = 'U';     // girar cubo a la izquierda
                     break;
                 case 'ArrowRight':
-                    alert('Cámara: →');
+                    movimientoGlobal = "U'";    // girar cubo a la derecha
                     break;
                 case 'ArrowUp':
-                    alert('Cámara: ↑');
+                    movimientoGlobal = 'R';     // girar cubo hacia arriba
                     break;
                 case 'ArrowDown':
-                    alert('Cámara: ↓');
+                    movimientoGlobal = "R'";    // girar cubo hacia abajo
                     break;
                 case 'Numpad4':
-                    alert('Rotar ↺');
+                    movimientoGlobal = "F'";     // rotar cubo hacia la derecha
                     break;
                 case 'Numpad6':
-                    alert('Rotar ↻');
+                    movimientoGlobal = 'F';    // rotar cubo hacia la izquierda
                     break;
             }
+
+            if (movimientoGlobal) {
+                cooldownActivo = true;
+                rotarCuboCompleto(movimientoGlobal);
+
+                setTimeout(() => {
+                    cooldownActivo = false;
+                }, cooldownDuracion);
+            }
         });
+
 
         /* ==== INICIALIZACIONES ==== */
         renderBotones();
