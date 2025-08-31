@@ -409,12 +409,12 @@
                     const geometry = new THREE.BoxGeometry(size, size, size);
 
                     const materials = [
-                        new THREE.MeshBasicMaterial({ color: 'white' }),  // derecha
-                        new THREE.MeshBasicMaterial({ color: 'yellow' }), // izquierda
-                        new THREE.MeshBasicMaterial({ color: 'blue' }),   // arriba
-                        new THREE.MeshBasicMaterial({ color: 'green' }),  // abajo
-                        new THREE.MeshBasicMaterial({ color: 'orange' }),    // frente
-                        new THREE.MeshBasicMaterial({ color: 'red' })  // atrás
+                        new THREE.MeshBasicMaterial({ color: '#007bff' }), // derecha → azul
+                        new THREE.MeshBasicMaterial({ color: '#00c853' }), // izquierda → verde
+                        new THREE.MeshBasicMaterial({ color: '#ffffff' }), // arriba → blanco
+                        new THREE.MeshBasicMaterial({ color: '#ffe600' }), // abajo → amarillo
+                        new THREE.MeshBasicMaterial({ color: '#d50000' }), // frente → rojo
+                        new THREE.MeshBasicMaterial({ color: '#ff6d00' })  // atrás → naranja
                     ];
 
                     const cubito = new THREE.Mesh(geometry, materials);
