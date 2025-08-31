@@ -472,12 +472,16 @@
         }
 
         /* ==== EVENTOS DE TECLADO ==== */
+
+        let cooldownActivo = false;
+        const cooldownDuracion = 400; // milisegundos
+
         document.addEventListener('keydown', (event) => {
             const tecla = event.key.toUpperCase();
 
             // Alternar prima con barra espaciadora
             if (event.code === 'Space') {
-                event.preventDefault(); // Evita que baje la página
+                event.preventDefault();
                 modoPrima = !modoPrima;
                 renderBotones();
                 return;
@@ -485,8 +489,16 @@
 
             // Movimientos del cubo (U, D, R, L, F, B)
             if (movimientos.includes(tecla)) {
+                if (cooldownActivo) return;
+
+                cooldownActivo = true;
                 const sentidoHorario = !modoPrima;
                 rotarCara(tecla, sentidoHorario);
+
+                setTimeout(() => {
+                    cooldownActivo = false;
+                }, cooldownDuracion);
+
                 return;
             }
 
@@ -539,12 +551,12 @@
         verAtajosBtn.addEventListener('click', () => {
             mostrarAtajos = !mostrarAtajos;
             verAtajosBtn.textContent = mostrarAtajos ? 'Ocultar atajos' : 'Ver atajos';
+
             renderBotones();
             renderBotonesCamara();
-
+            
         });
 
-        //
     </script>
 </body>
 </html>
