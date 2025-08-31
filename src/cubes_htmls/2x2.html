@@ -133,7 +133,7 @@
 
         #miniCanvasContainer {
             width: 100%;
-            height: 100%;
+            height: 90%;
             display: block;
         }
 
@@ -156,8 +156,15 @@
 
         <!-- Ventana flotante con vista alternativa -->
         <div class="mini-ventana" id="miniVentana">
-            <button class="toggle-ventana" id="toggleVentana">v</button>
+            <button class="toggle-ventana" id="toggleVentana">Cámara secundaria</button>
             <div class="contenido-ventana">
+                <select id="vistaSelector">
+                    <option value="superior">Superior</option>
+                    <option value="inferior">Inferior</option>
+                    <option value="izquierda">Izquierda</option>
+                    <option value="derecha">Derecha</option>
+                    <option value="opuesto">Opuesto</option>
+                </select>
                 <div id="miniCanvasContainer"></div>
             </div>
         </div>
@@ -217,9 +224,48 @@
         //mini ventana
         const miniCanvasContainer = document.getElementById('miniCanvasContainer');
 
-        const miniCamera = new THREE.PerspectiveCamera(85, 1, 0.1, 1000);
-        miniCamera.position.set(1.5, -3, 1.9);
-        miniCamera.lookAt(0, -1.3, 0);
+        const miniCamera = new THREE.PerspectiveCamera(70, 1, 0.1, 1000);
+        miniCamera.position.set(1.2, 3, 1.6);
+        miniCamera.lookAt(0, -1, 0);
+
+        const vistaSelector = document.getElementById('vistaSelector');
+
+        vistaSelector.addEventListener('change', () => {
+            const vista = vistaSelector.value;
+
+            switch (vista) {
+                case 'superior':
+                    miniCamera.position.set(1.2, 3, 1.6);
+                    miniCamera.lookAt(0, -1, 0);
+                    miniCamera.fov = 70;
+                    break;
+                case 'inferior':
+                    miniCamera.position.set(1.5, -3, 1.9);
+                    miniCamera.lookAt(0, -1.6, 0);
+                    miniCamera.fov = 80;
+                    break;
+                case 'izquierda':
+                    miniCamera.position.set(-5, 2, 3);
+                    miniCamera.lookAt(-1, -1, 0);
+                    miniCamera.fov = 55; 
+                    break;
+                case 'derecha':
+                    miniCamera.position.set(3, 1.67, -3);
+                    miniCamera.lookAt(-1, -1.2, 0);
+                    miniCamera.fov = 60;
+                    break;
+                case 'opuesto':
+                    miniCamera.position.set(-3, 1.67, -3);
+                    miniCamera.lookAt(0, -1.2, 0);
+                    miniCamera.fov = 70;
+                    break;
+            }
+
+            miniCamera.updateProjectionMatrix();
+
+            vistaSelector.blur(); // quita el foco del select
+        });
+
 
 
         const miniRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -715,11 +761,11 @@
 
             if (ventanaMinimizada) {
                 miniVentana.style.height = '30px';
-                toggleVentana.textContent = '>';
+                toggleVentana.textContent = '>  Abrir cámara secundaria';
                 miniCanvasContainer.style.display = 'none';
             } else {
                 miniVentana.style.height = '300px';
-                toggleVentana.textContent = 'v';
+                toggleVentana.textContent = 'Cámara secundaria';
                 miniCanvasContainer.style.display = 'block';
 
                 // Reajustar el renderer
