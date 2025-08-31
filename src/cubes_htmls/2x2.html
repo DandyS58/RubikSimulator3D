@@ -357,6 +357,8 @@
         ];
         let modoPrima = false;    // Si está activado el `'` en la notación
         let mostrarAtajos = false; // Mostrar/ocultar teclas rápidas
+        let cooldownActivo = false;
+        const cooldownDuracion = 400; // milisegundos
 
         const contenedor = document.getElementById('notacion-botones');
 
@@ -366,7 +368,6 @@
         function renderBotones() {
             contenedor.innerHTML = '';
 
-            // Botones de movimientos normales (U, D, R, etc.)
             movimientos.forEach(mov => {
                 const btn = document.createElement('button');
                 btn.setAttribute('data-movimiento', mov);
@@ -387,6 +388,19 @@
                     btn.appendChild(atajo);
                 }
 
+                // 🔥 Aquí agregamos el listener con cooldown
+                btn.addEventListener('click', () => {
+                    if (cooldownActivo) return;
+
+                    cooldownActivo = true;
+                    const sentidoHorario = !modoPrima;
+                    rotarCara(mov, sentidoHorario);
+
+                    setTimeout(() => {
+                        cooldownActivo = false;
+                    }, cooldownDuracion);
+                });
+
                 contenedor.appendChild(btn);
             });
 
@@ -394,7 +408,7 @@
             const btnPrima = document.createElement('button');
             btnPrima.addEventListener('click', () => {
                 modoPrima = !modoPrima;
-                renderBotones(); // Vuelve a renderizar con el nuevo estado
+                renderBotones();
             });
 
             const textoPrima = document.createElement('div');
@@ -413,6 +427,7 @@
 
             contenedor.appendChild(btnPrima);
         }
+
 
         /* ==== RENDER DE BOTONES DE CÁMARA ==== */
         function renderBotonesCamara() {
@@ -473,8 +488,6 @@
 
         /* ==== EVENTOS DE TECLADO ==== */
 
-        let cooldownActivo = false;
-        const cooldownDuracion = 400; // milisegundos
 
         document.addEventListener('keydown', (event) => {
             const tecla = event.key.toUpperCase();
