@@ -167,7 +167,8 @@
         <!-- Controles de cámara (rotar cubo) -->
         <div class="seccion">
             <h3>Controles de Cámara</h3>
-            <div class="botones">
+            <div class="botones" id="camara-botones">
+                <!-- Botones generados por JS -->
                 <button>←</button>
                 <button>→</button>
                 <button>↑</button>
@@ -436,7 +437,7 @@
 
         /* ==== RENDER DE BOTONES DE CÁMARA ==== */
         function renderBotonesCamara() {
-            const camaraContenedor = document.querySelector('.seccion:nth-of-type(2) .botones');
+            const camaraContenedor = document.getElementById('camara-botones');
             camaraContenedor.innerHTML = '';
 
             camaraBotones.forEach(({ label, atajo }) => {
@@ -456,9 +457,16 @@
                     btn.appendChild(span);
                 }
 
+                // Aquí podrías agregar el listener para controlar la cámara
+                btn.addEventListener('click', () => {
+                    console.log(`Acción de cámara: ${label}`);
+                    // ejecutarAccionCamara(label); ← si defines una función para eso
+                });
+
                 camaraContenedor.appendChild(btn);
             });
         }
+
 
         /* ==== RENDER DE BOTONES DE UTILIDADES ==== */
         function renderBotonesUtilidad() {
