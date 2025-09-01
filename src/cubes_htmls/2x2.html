@@ -518,6 +518,21 @@
 
         /* ==== VARIABLES GLOBALES ==== */
         const movimientos = ['U', 'D', 'R', 'L', 'F', 'B']; // Notación básica
+        const movimientosValidos = ['R', "R'", 'L', "L'", 'U', "U'", 'D', "D'", 'F', "F'", 'B', "B'"]; // notación completa
+        const exclusiones = {
+            'R': ["R'", "L'"],
+            "R'": ['R', 'L'],
+            'L': ["L'", "R'"],
+            "L'": ['L', 'R'],
+            'U': ["U'", "D'"],
+            "U'": ['U', 'D'],
+            'D': ["D'", "U'"],
+            "D'": ['D', 'U'],
+            'F': ["F'", "B'"],
+            "F'": ['F', 'B'],
+            'B': ["B'", "F'"],
+            "B'": ['B', 'F']
+        };
         const camaraBotones = [
             { label: '←', atajo: '←' },
             { label: '→', atajo: '→' },
@@ -529,7 +544,7 @@
         let modoPrima = false;    // Si está activado el `'` en la notación
         let mostrarAtajos = false; // Mostrar/ocultar teclas rápidas
         let cooldownActivo = false;
-        let cooldownDuracion = moveTime; // milisegundos
+        let cooldownDuracion = 410; // milisegundos
 
         
 
@@ -668,10 +683,16 @@
                 btn.textContent = label;
                 btn.id = `util-${id}`;
 
-                // Timer se activa/desactiva, los demás son placeholders
                 if (id === 'timer') {
                     btn.addEventListener('click', () => {
                         btn.classList.toggle('activo');
+                    });
+                } else if (id === 'revolver') {
+                    btn.addEventListener('click', () => {
+                        if (cooldownActivo) return;
+
+                        const secuencia = generarSecuenciaAleatoria();
+                        ejecutarSecuencia(secuencia);
                     });
                 } else {
                     btn.addEventListener('click', () => {
@@ -682,6 +703,7 @@
                 utilidadContenedor.appendChild(btn);
             });
         }
+
 
         /* ==== EVENTOS DE TECLADO ==== */
         document.addEventListener('keydown', (event) => {
@@ -788,7 +810,7 @@
             
         });
 
-        // CheckBox
+        /* == CheckBox == */
         const movimientoCheckbox = document.getElementById('movimientoCheckbox');
   
 
@@ -804,6 +826,49 @@
 
             }
         });
+
+        /* == AUTO REVOLVER == */
+        
+        //movimientos aleatorios
+        function generarSecuenciaAleatoria(min = 10, max = 15) {
+            const cantidad = Math.floor(Math.random() * (max - min + 1)) + min;
+            const secuencia = [];
+
+            while (secuencia.length < cantidad) {
+                const candidato = movimientosValidos[Math.floor(Math.random() * movimientosValidos.length)];
+                const anterior = secuencia[secuencia.length - 1];
+
+                if (!anterior || !exclusiones[anterior].includes(candidato)) {
+                    secuencia.push(candidato);
+                }
+            }
+            return secuencia;
+        }
+
+        //ejecutar movimientos
+        function ejecutarSecuencia(secuencia) {
+            cooldownActivo = true;
+
+            let index = 0;
+
+            function ejecutarSiguiente() {
+                if (index >= secuencia.length) {
+                    cooldownActivo = false;
+                    return;
+                }
+
+                const movimiento = secuencia[index];
+                rotarCara(movimiento); // tu función de animación
+
+                index++;
+
+                setTimeout(() => {
+                    setTimeout(ejecutarSiguiente, 8); // espera 8ms extra
+                }, moveTime);
+            }
+
+            ejecutarSiguiente();
+        }
 
     </script>
 </body>
